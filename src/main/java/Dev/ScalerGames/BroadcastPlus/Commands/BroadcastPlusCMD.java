@@ -33,6 +33,12 @@ public class BroadcastPlusCMD implements CommandExecutor, TabCompleter {
                             Gui.reloadGui();
                             Lang.reloadLang();
                             Data.reloadData();
+                            // Cancel all running tasks and restart the scheduled broadcast engine
+                            Main.getInstance().getServer().getScheduler().cancelTasks(Main.getInstance());
+                            Main.ab = new Dev.ScalerGames.BroadcastPlus.Methods.AutoBroadcast(Main.getInstance());
+                            Main.ab.autoMessage();
+                            Main.scheduledBroadcast = new Dev.ScalerGames.BroadcastPlus.Methods.ScheduledBroadcast(Main.getInstance());
+                            Main.scheduledBroadcast.start();
                             Messages.logger("&2Successfully reloaded all files");
                             Messages.prefix(s, "&2Successfully reloaded all BroadcastPlus's files");
                         } catch (Exception e) {

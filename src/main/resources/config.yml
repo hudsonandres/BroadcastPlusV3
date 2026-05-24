@@ -27,6 +27,29 @@ AutoBroadcast:
     - 'Test3'
     - 'preset:example'
 
+ScheduledBroadcast:
+  #If scheduled broadcast is enabled or not.
+  #To enable or disable this feature a server restart is required!
+  enabled: false
+  #The timezone to use for all scheduled broadcasts.
+  #Use standard Java timezone IDs, e.g: UTC, America/New_York, Europe/London, America/Sao_Paulo
+  timezone: "UTC"
+  #Define named schedules. Each schedule fires once per day at the specified time.
+  schedules:
+    morning-announcement:
+      #Time in 24-hour format (HH:mm)
+      time: "10:00"
+      method: order
+      messages:
+        - '&6Good morning everyone! Welcome to the server!'
+        - 'preset:example'
+    evening-reminder:
+      time: "20:00"
+      method: random
+      messages:
+        - '&bDon''t forget to vote for the server!'
+        - '&aCheck out /shop for daily deals!'
+
 BossBar:
   #These settings are backup settings if the ones provided fail.
   #Make sure these are correct or the BossBar broadcast will fail.

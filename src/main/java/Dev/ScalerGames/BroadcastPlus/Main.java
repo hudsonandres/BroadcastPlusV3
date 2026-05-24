@@ -7,8 +7,10 @@ import Dev.ScalerGames.BroadcastPlus.Files.Config;
 import Dev.ScalerGames.BroadcastPlus.Files.Data;
 import Dev.ScalerGames.BroadcastPlus.Files.Gui;
 import Dev.ScalerGames.BroadcastPlus.Files.Lang;
+import Dev.ScalerGames.BroadcastPlus.Commands.ScheduleBroadcastCMD;
 import Dev.ScalerGames.BroadcastPlus.Methods.AutoBroadcast;
 import Dev.ScalerGames.BroadcastPlus.Methods.BossBar;
+import Dev.ScalerGames.BroadcastPlus.Methods.ScheduledBroadcast;
 import Dev.ScalerGames.BroadcastPlus.Methods.Gui.GuiListener;
 import Dev.ScalerGames.BroadcastPlus.Utils.Messages;
 import Dev.ScalerGames.BroadcastPlus.Utils.Metrics;
@@ -26,6 +28,7 @@ public class Main extends JavaPlugin implements Listener {
     public static BossBar bar;
     public final Map<UUID, Boolean> autoBroadcast = new HashMap<>();
     public static AutoBroadcast ab;
+    public static ScheduledBroadcast scheduledBroadcast;
 
     @Override
     public void onEnable() {
@@ -37,6 +40,8 @@ public class Main extends JavaPlugin implements Listener {
         bar = new BossBar(this);
         ab = new AutoBroadcast(this);
         ab.autoMessage();
+        scheduledBroadcast = new ScheduledBroadcast(this);
+        scheduledBroadcast.start();
         new Metrics(this, 17055);
         updateChecker();
         retrieveData();
@@ -68,6 +73,8 @@ public class Main extends JavaPlugin implements Listener {
         Objects.requireNonNull(getCommand("practicebroadcast")).setExecutor(new PracticeBroadcast());
         Objects.requireNonNull(getCommand("practicebroadcast")).setTabCompleter(new PracticeBroadcast());
         Objects.requireNonNull(getCommand("autobroadcast")).setExecutor(new AutoBroadcastCMD());
+        Objects.requireNonNull(getCommand("schedulebroadcast")).setExecutor(new ScheduleBroadcastCMD());
+        Objects.requireNonNull(getCommand("schedulebroadcast")).setTabCompleter(new ScheduleBroadcastCMD());
     }
 
     public void enableFiles() {
