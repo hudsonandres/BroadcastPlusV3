@@ -1,0 +1,72 @@
+#██████╗░██████╗░░█████╗░░█████╗░██████╗░░█████╗░░█████╗░░██████╗████████╗░░░░░░░
+#██╔══██╗██╔══██╗██╔══██╗██╔══██╗██╔══██╗██╔══██╗██╔══██╗██╔════╝╚══██╔══╝░░██╗░░
+#██████╦╝██████╔╝██║░░██║███████║██║░░██║██║░░╚═╝███████║╚█████╗░░░░██║░░░██████╗
+#██╔══██╗██╔══██╗██║░░██║██╔══██║██║░░██║██║░░██╗██╔══██║░╚═══██╗░░░██║░░░╚═██╔═╝
+#██████╦╝██║░░██║╚█████╔╝██║░░██║██████╔╝╚█████╔╝██║░░██║██████╔╝░░░██║░░░░░╚═╝░░
+#╚═════╝░╚═╝░░╚═╝░╚════╝░╚═╝░░╚═╝╚═════╝░░╚════╝░╚═╝░░╚═╝╚═════╝░░░░╚═╝░░░░░░░░░░
+
+#The Prefix For The Broadcast
+BroadcastPrefix: "&8&l[&c&lBroadcast&8&l] "
+
+#Title Settings
+#Timings are in ticks. [20 ticks = 1 second]
+TitleFadeIn: 1
+TitleDisplayTime: 20
+TitleFadeOut: 1
+
+AutoBroadcast:
+  #If auto broadcast is enabled or not.
+  #To enable or disable this feature a server restart is required!
+  enabled: false
+  #The time in seconds between broadcasting. This example is 5 minutes
+  time: 300
+  method: order
+  messages:
+    - 'Test1'
+    - 'Test2'
+    - 'Test3'
+    - 'preset:example'
+
+BossBar:
+  #These settings are backup settings if the ones provided fail.
+  #Make sure these are correct or the BossBar broadcast will fail.
+  Color: 'RED'
+  Style: 'SOLID'
+  Time: 10
+
+Presets:
+  example:
+    message:
+      - '&8&l&m========&3&lTest Server&8&l&m========'
+      - '&8&l- &cLine 1'
+      - '&8&l- #123456Line 2'
+      - '&8&l- &9%player_name%'
+      - '&8&l&m==========================='
+  10seconds:
+    boss:
+      color: 'RED'
+      style: 'SEGMENTED_10'
+      time: 10
+      text: '&c10 Seconds Boss Bar'
+
+#Redis Settings
+#Pub/sub system to synchronize broadcasts between servers.
+#Requires a Redis server accessible by all servers in the network.
+Redis:
+  #Enable Redis integration?
+  enabled: false
+  #Redis server address
+  host: 'localhost'
+  port: 6379
+  #Redis password (leave empty if not using authentication)
+  password: ''
+  #Connection timeout in milliseconds
+  timeout: 2000
+  #Redis channel used for broadcasts
+  channel: 'broadcastplus'
+  #Unique name for this server (prevents re-broadcasting own message)
+  server-name: 'survival'
+  #Is this server the AutoBroadcast master?
+  #If true: only this server triggers AutoBroadcast and publishes to Redis.
+  #Other servers receive via Redis and DO NOT trigger AutoBroadcast locally.
+  autobroadcast-master: false

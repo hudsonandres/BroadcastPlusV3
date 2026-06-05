@@ -1,0 +1,66 @@
+name: BroadcastPlus
+version: 3.1.0
+main: Dev.ScalerGames.BroadcastPlus.Main
+api-version: 1.13
+author: ScalerGames
+description: A Minecraft Broadcasting plugin.
+softdepend:
+  - PlaceholderAPI
+  - LuckPerms
+loadbefore:
+  - Essentials
+commands:
+  broadcast:
+    aliases: [announce]
+  broadcastworld:
+    aliases: [bw]
+  localbroadcast:
+    aliases: [lb]
+  broadcastplus:
+    aliases: [bp]
+  randombroadcast:
+    aliases: [rb]
+  permbroadcast:
+    aliases: [pb]
+  practicebroadcast:
+    description: "A command to test a broadcast"
+  autobroadcast:
+    description: "A command to toggle the servers auto broadcasts"
+permissions:
+  bp.broadcast:
+    description: "Allows use of /broadcast"
+  bp.broadcasworld:
+    description: "Allows use of /broadcastworld"
+  bp.localbroadcast:
+    description: "Allows use of /localbroadcast"
+  bp.permbroadcast:
+    description: "Allows use of /permbroadcast"
+  bp.practicebroadcast:
+    description: "Allows use of /practicebroadcast"
+  bp.randombroadcast:
+    description: "Allows use of /randombroadcast"
+  bp.autobroadcast:
+    description: "Allows use of /autobroadcast"
+  bp.reload:
+    description: "Allows use of /broadcastplus reload"
+  bp.version:
+    description: "Allows use of /broadcastplus version"
+  bp.menu:
+    description: "Allows use of /broadcastplus menu"
+  bp.boss-clear:
+    description: "Allows use of /broadcastplus boss-clear"
+  bp.*:
+    description: "Gives access to all broadcastplus commands"
+    children:
+      bp.broadcast: true
+      bp.broadcastworld: true
+      bp.localbroadcast: true
+      bp.permbroadcast: true
+      bp.practicebroadcast: true
+      bp.randombroadcast: true
+      bp.autobroadcast: true
+      bp.reload: true
+      bp.version: true
+      bp.menu: true
+      bp.boss-clear: true
+

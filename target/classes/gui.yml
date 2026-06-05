@@ -1,0 +1,17 @@
+Menus:
+  example:
+    name: '&3Example GUI'
+    size: 27
+    items:
+      0:
+        item: 'DIAMOND_AXE'
+        slot: 13
+        display-name: '&3&lItem Giver'
+        lore:
+          - "&8-----------------------"
+          - "&bThis will give a diamond axe"
+          - "&bwhen clicked"
+        flags:
+          - "HIDE_ATTRIBUTES"
+        events:
+          - "c-cmd:minecraft:give %player_name% minecraft:diamond_axe 1"
