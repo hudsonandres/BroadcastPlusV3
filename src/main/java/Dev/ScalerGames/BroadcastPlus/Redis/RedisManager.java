@@ -1,5 +1,6 @@
 package Dev.ScalerGames.BroadcastPlus.Redis;
 
+import Dev.ScalerGames.BroadcastPlus.Files.Engine;
 import Dev.ScalerGames.BroadcastPlus.Main;
 import Dev.ScalerGames.BroadcastPlus.Utils.Messages;
 import org.bukkit.Bukkit;
@@ -28,11 +29,11 @@ public class RedisManager {
 
     public RedisManager(Main plugin) {
         this.plugin = plugin;
-        this.host     = plugin.getConfig().getString("Redis.host", "localhost");
-        this.port     = plugin.getConfig().getInt("Redis.port", 6379);
-        this.password = plugin.getConfig().getString("Redis.password", "");
-        this.timeout  = plugin.getConfig().getInt("Redis.timeout", 2000);
-        this.channel  = plugin.getConfig().getString("Redis.channel", "broadcastplus");
+        this.host     = Engine.getEngineConfig().getString("Redis.host", "localhost");
+        this.port     = Engine.getEngineConfig().getInt("Redis.port", 6379);
+        this.password = Engine.getEngineConfig().getString("Redis.password", "");
+        this.timeout  = Engine.getEngineConfig().getInt("Redis.timeout", 2000);
+        this.channel  = Engine.getEngineConfig().getString("Redis.channel", "broadcastplus");
     }
 
     /** Initializes the pool and starts the subscriber thread. */

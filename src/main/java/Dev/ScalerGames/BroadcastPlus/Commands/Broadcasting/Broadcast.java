@@ -3,6 +3,7 @@ package Dev.ScalerGames.BroadcastPlus.Commands.Broadcasting;
 import Dev.ScalerGames.BroadcastPlus.Commands.CommandCheck;
 import Dev.ScalerGames.BroadcastPlus.Files.Gui;
 import Dev.ScalerGames.BroadcastPlus.Files.Lang;
+import Dev.ScalerGames.BroadcastPlus.Files.Engine;
 import Dev.ScalerGames.BroadcastPlus.Main;
 import Dev.ScalerGames.BroadcastPlus.Methods.Advancement;
 import Dev.ScalerGames.BroadcastPlus.Methods.BroadcastMethods;
@@ -230,7 +231,7 @@ public class Broadcast implements CommandExecutor, TabCompleter {
      */
     private boolean shouldExecuteLocally(String targetServer) {
         if (targetServer == null || targetServer.isEmpty()) return true;
-        String thisServer = Main.getInstance().getConfig().getString("Redis.server-name", "default");
+        String thisServer = Engine.getEngineConfig().getString("Redis.server-name", "default");
         return Arrays.stream(targetServer.split(","))
                 .map(String::trim)
                 .anyMatch(t -> t.equalsIgnoreCase(thisServer));
@@ -238,7 +239,7 @@ public class Broadcast implements CommandExecutor, TabCompleter {
 
     private void redisPublish(String type, String message, String extra, String targetServer) {
         if (Main.redis != null && Main.redis.isEnabled()) {
-            String server = Main.getInstance().getConfig().getString("Redis.server-name", "default");
+            String server = Engine.getEngineConfig().getString("Redis.server-name", "default");
             Main.redis.publish(new RedisMessage(type, message, extra, server, targetServer));
         }
     }

@@ -5,6 +5,7 @@ import Dev.ScalerGames.BroadcastPlus.Commands.BroadcastPlusCMD;
 import Dev.ScalerGames.BroadcastPlus.Commands.Broadcasting.*;
 import Dev.ScalerGames.BroadcastPlus.Files.Config;
 import Dev.ScalerGames.BroadcastPlus.Files.Data;
+import Dev.ScalerGames.BroadcastPlus.Files.Engine;
 import Dev.ScalerGames.BroadcastPlus.Files.Gui;
 import Dev.ScalerGames.BroadcastPlus.Files.Lang;
 import Dev.ScalerGames.BroadcastPlus.Methods.AutoBroadcast;
@@ -79,6 +80,7 @@ public class Main extends JavaPlugin implements Listener {
         Lang.saveDefaultLang();
         Gui.saveDefaultGui();
         Data.saveDefaultData();
+        Engine.saveDefaultEngine();
     }
 
     public void enablePlugins() {
@@ -115,7 +117,7 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     public void enableRedis() {
-        if (getConfig().getBoolean("Redis.enabled", false)) {
+        if (Engine.getEngineConfig().getBoolean("Redis.enabled", false)) {
             redis = new RedisManager(this);
             redis.connect();
         }

@@ -1,6 +1,7 @@
 package Dev.ScalerGames.BroadcastPlus.Commands;
 
 import Dev.ScalerGames.BroadcastPlus.Files.Data;
+import Dev.ScalerGames.BroadcastPlus.Files.Engine;
 import Dev.ScalerGames.BroadcastPlus.Files.Gui;
 import Dev.ScalerGames.BroadcastPlus.Files.Lang;
 import Dev.ScalerGames.BroadcastPlus.Main;
@@ -33,6 +34,7 @@ public class BroadcastPlusCMD implements CommandExecutor, TabCompleter {
                             Gui.reloadGui();
                             Lang.reloadLang();
                             Data.reloadData();
+                            Engine.reloadEngine();
                             Messages.logger("&2Successfully reloaded all files");
                             Messages.prefix(s, "&2Successfully reloaded all BroadcastPlus's files");
                         } catch (Exception e) {

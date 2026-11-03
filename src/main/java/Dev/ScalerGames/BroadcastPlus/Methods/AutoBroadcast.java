@@ -1,5 +1,6 @@
 package Dev.ScalerGames.BroadcastPlus.Methods;
 
+import Dev.ScalerGames.BroadcastPlus.Files.Engine;
 import Dev.ScalerGames.BroadcastPlus.Main;
 import Dev.ScalerGames.BroadcastPlus.Redis.RedisMessage;
 import Dev.ScalerGames.BroadcastPlus.Utils.Format;
@@ -22,8 +23,8 @@ public class AutoBroadcast {
 
             // If Redis is active and this server is NOT the master, do not start local AutoBroadcast.
             // Messages will be received from the master server via Redis.
-            boolean redisEnabled = Main.getInstance().getConfig().getBoolean("Redis.enabled", false);
-            boolean isMaster    = Main.getInstance().getConfig().getBoolean("Redis.autobroadcast-master", false);
+            boolean redisEnabled = Engine.getEngineConfig().getBoolean("Redis.enabled", false);
+            boolean isMaster    = Engine.getEngineConfig().getBoolean("Redis.autobroadcast-master", false);
             if (redisEnabled && !isMaster) return;
 
             Main.getInstance().getServer().getScheduler().scheduleSyncRepeatingTask(Main.getInstance(), () -> {
@@ -38,7 +39,7 @@ public class AutoBroadcast {
                     });
                     // Publish to Redis if it is the master server.
                     if (redisEnabled && Main.redis != null && Main.redis.isEnabled()) {
-                        String server = Main.getInstance().getConfig().getString("Redis.server-name", "default");
+                        String server = Engine.getEngineConfig().getString("Redis.server-name", "default");
                         Main.redis.publish(new RedisMessage("autobroadcast", Messages.autoBroadcastMSG(msg), "", server));
                     }
                     if (msgLine == Main.getInstance().getConfig().getStringList("AutoBroadcast.messages").size()-1) {
@@ -56,7 +57,7 @@ public class AutoBroadcast {
                     });
                     // Publish to Redis if it is the master server.
                     if (redisEnabled && Main.redis != null && Main.redis.isEnabled()) {
-                        String server = Main.getInstance().getConfig().getString("Redis.server-name", "default");
+                        String server = Engine.getEngineConfig().getString("Redis.server-name", "default");
                         Main.redis.publish(new RedisMessage("autobroadcast", Messages.autoBroadcastMSG(msg), "", server));
                     }
                 }

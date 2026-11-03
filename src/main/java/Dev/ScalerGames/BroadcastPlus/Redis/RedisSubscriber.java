@@ -1,5 +1,6 @@
 package Dev.ScalerGames.BroadcastPlus.Redis;
 
+import Dev.ScalerGames.BroadcastPlus.Files.Engine;
 import Dev.ScalerGames.BroadcastPlus.Main;
 import Dev.ScalerGames.BroadcastPlus.Methods.Advancement;
 import Dev.ScalerGames.BroadcastPlus.Methods.BroadcastMethods;
@@ -29,7 +30,7 @@ public class RedisSubscriber extends JedisPubSub {
         RedisMessage msg = RedisMessage.fromJson(json);
 
         // Ignore messages originating from this same server
-        String thisServer = plugin.getConfig().getString("Redis.server-name", "default");
+        String thisServer = Engine.getEngineConfig().getString("Redis.server-name", "default");
         if (thisServer.equalsIgnoreCase(msg.getOriginServer())) return;
 
         // If specific target server(s) are set, only process on those servers.

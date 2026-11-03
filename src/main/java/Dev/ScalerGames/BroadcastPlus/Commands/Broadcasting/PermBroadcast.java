@@ -3,6 +3,7 @@ package Dev.ScalerGames.BroadcastPlus.Commands.Broadcasting;
 import Dev.ScalerGames.BroadcastPlus.Commands.CommandCheck;
 import Dev.ScalerGames.BroadcastPlus.Files.Gui;
 import Dev.ScalerGames.BroadcastPlus.Files.Lang;
+import Dev.ScalerGames.BroadcastPlus.Files.Engine;
 import Dev.ScalerGames.BroadcastPlus.Main;
 import Dev.ScalerGames.BroadcastPlus.Methods.BroadcastMethods;
 import Dev.ScalerGames.BroadcastPlus.Methods.Features;
@@ -164,7 +165,7 @@ public class PermBroadcast implements CommandExecutor, TabCompleter {
 
     private void redisPublish(String type, String message, String extra) {
         if (Main.redis != null && Main.redis.isEnabled()) {
-            String server = Main.getInstance().getConfig().getString("Redis.server-name", "default");
+            String server = Engine.getEngineConfig().getString("Redis.server-name", "default");
             Main.redis.publish(new RedisMessage(type, message, extra, server));
         }
     }

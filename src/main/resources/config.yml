@@ -48,35 +48,3 @@ Presets:
       style: 'SEGMENTED_10'
       time: 10
       text: '&c10 Seconds Boss Bar'
-
-#Redis Settings
-#Pub/sub system to synchronize broadcasts between servers.
-#Requires a Redis server accessible by all servers in the network.
-Redis:
-  #Enable Redis integration?
-  enabled: false
-  #Redis server address
-  host: 'localhost'
-  port: 6379
-  #Redis password (leave empty if not using authentication)
-  password: ''
-  #Connection timeout in milliseconds
-  timeout: 2000
-  #Redis channel used for broadcasts
-  channel: 'broadcastplus'
-  #Unique name for this server (prevents re-broadcasting own message)
-  server-name: 'survival'
-  #Is this server the AutoBroadcast master?
-  #If true: only this server triggers AutoBroadcast and publishes to Redis.
-  #Other servers receive via Redis and DO NOT trigger AutoBroadcast locally.
-  autobroadcast-master: false
-
-  # --- Targeted Server Broadcasts ---
-  #Send a broadcast to ONE or MORE specific servers (but not all) using:
-  #  /broadcast --server <server-name> <method> <message>
-  #  /broadcast --server <server1,server2,...> <method> <message>
-  #Examples:
-  #  /broadcast --server minigames chat Hello Minigames!
-  #  /broadcast --server survival,minigames title Welcome!
-  #The server name(s) must match the "server-name" value in each server's config.yml.
-  #If --server is omitted, the broadcast is sent to ALL servers (global, default behavior).
