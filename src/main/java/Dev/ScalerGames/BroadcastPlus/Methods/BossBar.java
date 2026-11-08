@@ -8,83 +8,132 @@ import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.entity.Player;
 
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BossBar {
 
-    private org.bukkit.boss.BossBar bar;
     private final Main plugin;
-    private int taskID = -1;
     public int bossID = 1;
+
+    /**
+     * Keeps track of every active boss bar instance so that:
+     * - Joining players (server switch) are added to all visible bars.
+     * - deleteBar() can remove and cancel ALL active bars, not just the last one.
+     */
+    private final List<org.bukkit.boss.BossBar> activeBars = new ArrayList<>();
+
+    /**
+     * Tracks the scheduler task ID for each active bar so that deleteBar()
+     * can cancel every running timer, not just the most-recently-created one.
+     */
+    private final List<Integer> activeTaskIDs = new ArrayList<>();
 
     public BossBar(Main plugin) {
         this.plugin = plugin;
     }
 
     /**
-     * This creates the boss bar to broadcast
-     * @param time This time the boss bar runs for
-     * @param color The color of the boss bar
-     * @param style The style of the boss bar
-     * @param msg The message that the boss bar will display
+     * Adds a joining player to every currently active boss bar so they can
+     * see bars that were created before they switched to this server.
+     * @param p The player who just joined
      */
+    public void addPlayerToActiveBars(Player p) {
+        activeBars.forEach(b -> {
+            if (b != null && b.isVisible()) b.addPlayer(p);
+        });
+    }
 
-    public void createBar (Integer time, String color, String style, String msg) {
+    /**
+     * Creates a new boss bar, registers it in activeBars, starts its timer,
+     * and returns the bar instance so callers can add only the intended players.
+     *
+     * @param time  Duration in seconds
+     * @param color Bar color (BarColor name)
+     * @param style Bar style (BarStyle name)
+     * @param msg   Message to display
+     * @return The created BossBar instance
+     */
+    public org.bukkit.boss.BossBar createBar(Integer time, String color, String style, String msg) {
+        org.bukkit.boss.BossBar bar;
         try {
             NamespacedKey key = new NamespacedKey(Main.getInstance(), String.valueOf(bossID));
             bar = Bukkit.createBossBar(key, Format.color(msg), BarColor.valueOf(color), BarStyle.valueOf(style));
-            bossID = bossID + 1;
+            bossID++;
         } catch (Exception e) {
-            bar.setColor(BarColor.valueOf(Main.getInstance().getConfig().getString("BossBar.Color")));
-            bar.setStyle(BarStyle.valueOf(Main.getInstance().getConfig().getString("BossBar.Style")));
+            // Fallback to config defaults if the provided color/style are invalid
+            BarColor fallbackColor = BarColor.valueOf(Main.getInstance().getConfig().getString("BossBar.Color", "RED"));
+            BarStyle fallbackStyle = BarStyle.valueOf(Main.getInstance().getConfig().getString("BossBar.Style", "SOLID"));
+            NamespacedKey key = new NamespacedKey(Main.getInstance(), String.valueOf(bossID));
+            bar = Bukkit.createBossBar(key, Format.color(msg), fallbackColor, fallbackStyle);
+            bossID++;
         }
         bar.setVisible(true);
-        run(time);
+        activeBars.add(bar);
+        run(bar, time);
+        return bar;
     }
 
-    public void deleteBar () {
-        for (int i=1; i<bossID; i++) {
-            NamespacedKey key = new NamespacedKey(Main.getInstance(), String.valueOf(i));
-            Objects.requireNonNull(Bukkit.getBossBar(key)).removeAll();
-            Bukkit.getScheduler().cancelTask(taskID);
+    /**
+     * Removes all active boss bars from all players and cancels every timer.
+     */
+    public void deleteBar() {
+        for (org.bukkit.boss.BossBar b : activeBars) {
+            if (b != null) {
+                b.removeAll();
+                b.setVisible(false);
+            }
+        }
+        activeBars.clear();
+        for (int id : activeTaskIDs) {
+            Bukkit.getScheduler().cancelTask(id);
+        }
+        activeTaskIDs.clear();
+    }
+
+    /**
+     * Adds a player to the most recently created bar.
+     * Prefer using the return value of createBar() and calling addPlayer directly on it.
+     * @param p The player to add
+     */
+    public void addPlayer(Player p) {
+        if (!activeBars.isEmpty()) {
+            activeBars.get(activeBars.size() - 1).addPlayer(p);
         }
     }
 
     /**
-     * This adds a player to the boss bar
-     * @param p The player it will add
+     * Starts the countdown animation for the given bar.
+     * Each bar tracks its own task ID independently.
+     *
+     * @param bar        The bar to animate
+     * @param timeAmount Duration in seconds
      */
+    private void run(org.bukkit.boss.BossBar bar, Integer timeAmount) {
+        // Wrapper to allow mutation inside the anonymous Runnable
+        int[] taskIDHolder = new int[1];
 
-    public void addPlayer(Player p) {bar.addPlayer(p);}
-
-    /**
-     * This triggers the boss bar animation
-     * @param timeAmount The amount of time the boss bar will run for
-     */
-
-    public void run(Integer timeAmount) {
-        taskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
-
+        int taskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
             double progress = 1.0;
-            final double time = 1.0/(timeAmount);
+            final double step = 1.0 / timeAmount;
 
             @Override
             public void run() {
                 if (progress <= 0) {
                     bar.removeAll();
                     bar.setVisible(false);
-                    bar = null;
-                    Bukkit.getScheduler().cancelTask(taskID);
+                    activeBars.remove(bar);
+                    activeTaskIDs.remove(Integer.valueOf(taskIDHolder[0]));
+                    Bukkit.getScheduler().cancelTask(taskIDHolder[0]);
                 } else {
-                    if (bar != null) {
-                        bar.setProgress(progress);
-                        progress = progress - time;
-                    } else {
-                        Bukkit.getScheduler().cancelTask(taskID);
-                    }
+                    bar.setProgress(Math.max(0, progress));
+                    progress -= step;
                 }
             }
-        },0, 20);
+        }, 0, 20);
+
+        taskIDHolder[0] = taskID;
+        activeTaskIDs.add(taskID);
     }
 
 }

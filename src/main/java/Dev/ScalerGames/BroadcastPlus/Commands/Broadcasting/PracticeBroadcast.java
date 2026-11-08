@@ -52,19 +52,21 @@ public class PracticeBroadcast implements CommandExecutor, TabCompleter {
                     else if (args[0].equalsIgnoreCase("boss")) {
                         if (args.length == 2) {
                             if (Main.getInstance().getConfig().contains("Presets." + args[1] + ".boss")) {
-                                Main.bar.createBar(Main.getInstance().getConfig().getInt("Presets." + args[1] + ".boss.time"),
+                                org.bukkit.boss.BossBar createdBar = Main.bar.createBar(
+                                        Main.getInstance().getConfig().getInt("Presets." + args[1] + ".boss.time"),
                                         Main.getInstance().getConfig().getString("Presets." + args[1] + ".boss.color"),
                                         Main.getInstance().getConfig().getString("Presets." + args[1] + ".boss.style"),
                                         Main.getInstance().getConfig().getString("Presets." + args[1] + ".boss.text"));
-                                Main.bar.addPlayer(p);
+                                createdBar.addPlayer(p);
                             } else {
                                 Messages.prefix(s, "&cInvalid Preset Name");
                             }
                         }
                         else if (args.length >= 5) {
                             if (CommandCheck.isInt(args[1])) {
-                                Main.bar.createBar(Integer.parseInt(args[1]), args[2], args[3], Messages.stringJoin(args, 4));
-                                Main.bar.addPlayer(p);
+                                org.bukkit.boss.BossBar createdBar = Main.bar.createBar(
+                                        Integer.parseInt(args[1]), args[2], args[3], Messages.stringJoin(args, 4));
+                                createdBar.addPlayer(p);
                             } else {
                                 Messages.prefix(s, "&cInvalid Timing");
                             }

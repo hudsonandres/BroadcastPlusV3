@@ -43,7 +43,7 @@ public class PermBroadcast implements CommandExecutor, TabCompleter {
                         if (args.length >= 4) {
                             if (CommandCheck.isInt(args[2])) {
                                 String barMsg = Messages.stringJoin(args, 3);
-                                int timing = Integer.parseInt(args[3]);
+                                int timing = Integer.parseInt(args[2]); // args[2] = timing, args[3..] = message
                                 Bukkit.getOnlinePlayers().forEach(player -> {
                                     if (player.hasPermission(args[1])) {
                                         BroadcastMethods.sendActionBar(player, barMsg, timing);
@@ -87,10 +87,10 @@ public class PermBroadcast implements CommandExecutor, TabCompleter {
                                 String c = Main.getInstance().getConfig().getString("Presets." + args[2] + ".boss.color");
                                 String st = Main.getInstance().getConfig().getString("Presets." + args[2] + ".boss.style");
                                 String tx = Main.getInstance().getConfig().getString("Presets." + args[2] + ".boss.text");
-                                Main.bar.createBar(t, c, st, tx);
+                                org.bukkit.boss.BossBar createdBar = Main.bar.createBar(t, c, st, tx);
                                 Bukkit.getOnlinePlayers().forEach(player -> {
                                     if (player.hasPermission(args[1])) {
-                                        Main.bar.addPlayer(player);
+                                        createdBar.addPlayer(player);
                                     }
                                 });
                                 redisPublish("boss", tx, t + "|" + c + "|" + st);
@@ -100,10 +100,10 @@ public class PermBroadcast implements CommandExecutor, TabCompleter {
                         }
                          else if (args.length >= 6 && CommandCheck.isInt(args[2])) {
                             String bossMsg = Messages.stringJoin(args, 5);
-                            Main.bar.createBar(Integer.parseInt(args[2]), args[3], args[4], bossMsg);
+                            org.bukkit.boss.BossBar createdBar = Main.bar.createBar(Integer.parseInt(args[2]), args[3], args[4], bossMsg);
                             Bukkit.getOnlinePlayers().forEach(player -> {
                                 if (player.hasPermission(args[1])) {
-                                    Main.bar.addPlayer(player);
+                                    createdBar.addPlayer(player);
                                 }
                             });
                             redisPublish("boss", bossMsg, args[2] + "|" + args[3] + "|" + args[4]);

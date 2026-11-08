@@ -34,17 +34,21 @@ public class Advancement {
 
     private void create() {
         String itemString = "item";
-        if (Bukkit.getVersion().equalsIgnoreCase("1.20.5") || Bukkit.getVersion().equalsIgnoreCase("1.20.6")) {
-            itemString = "id";
-        }
 
         try {
-            String[] version = Bukkit.getVersion().split("\\.");
-            if (Integer.parseInt(version[1]) >= 21) {
+            // Bukkit.getBukkitVersion() returns a clean semver like "1.21.1-R0.1-SNAPSHOT"
+            // Bukkit.getVersion() returns "git-Paper-XXX (MC: 1.21.1)" — not safe to split directly
+            String bukkitVer = Bukkit.getBukkitVersion(); // e.g. "1.21.1-R0.1-SNAPSHOT"
+            String[] parts = bukkitVer.split("-")[0].split("\\.");  // ["1","21","1"]
+            int minor = Integer.parseInt(parts[1]);
+            int patch = parts.length > 2 ? Integer.parseInt(parts[2]) : 0;
+
+            // "id" key was introduced in 1.20.5 and is required from 1.21 onward
+            if (minor > 20 || (minor == 20 && patch >= 5)) {
                 itemString = "id";
             }
         } catch (Exception ex) {
-            Messages.logger("&cFailed to retrieve Bukkit version");
+            Messages.logger("&cFailed to retrieve Bukkit version — defaulting item key to 'item'");
         }
 
         Bukkit.getUnsafe().loadAdvancement(key, "{\n" +

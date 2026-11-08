@@ -12,18 +12,29 @@ import java.util.regex.Pattern;
 public class BroadcastMethods {
 
     public static void sendActionBar(Player p, String msg, Integer seconds) {
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getInstance(), new Runnable() {
+        // Wrapper to allow the task to cancel itself by its own ID
+        int[] taskIDHolder = new int[1];
+
+        int taskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getInstance(), new Runnable() {
             int time = 0;
             @Override
             public void run() {
-                if (time == seconds) {
-                    Bukkit.getScheduler().cancelTask(0);
+                if (time >= seconds) {
+                    Bukkit.getScheduler().cancelTask(taskIDHolder[0]);
                 } else {
                     time++;
-                    p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(Format.placeholder(p, msg)));
+                    if (p.isOnline()) {
+                        p.spigot().sendMessage(ChatMessageType.ACTION_BAR,
+                                TextComponent.fromLegacyText(Format.placeholder(p, msg)));
+                    } else {
+                        // Player disconnected — no point in keeping the task alive
+                        Bukkit.getScheduler().cancelTask(taskIDHolder[0]);
+                    }
                 }
             }
         }, 0, 20);
+
+        taskIDHolder[0] = taskID;
     }
 
     public static void sendTitle(Player p, String msg) {

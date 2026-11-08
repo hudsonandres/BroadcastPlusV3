@@ -70,8 +70,8 @@ public class RedisSubscriber extends JedisPubSub {
                 if (parts.length == 3) {
                     try {
                         int time = Integer.parseInt(parts[0]);
-                        Main.bar.createBar(time, parts[1], parts[2], msg.getMessage());
-                        Bukkit.getOnlinePlayers().forEach(p -> Main.bar.addPlayer(p));
+                        org.bukkit.boss.BossBar createdBar = Main.bar.createBar(time, parts[1], parts[2], msg.getMessage());
+                        Bukkit.getOnlinePlayers().forEach(createdBar::addPlayer);
                     } catch (Exception e) {
                         Messages.logger("&cRedis boss broadcast failed: " + e.getMessage());
                     }

@@ -69,9 +69,9 @@ public class RandomBroadcast implements CommandExecutor {
                                 String c = Main.getInstance().getConfig().getString("Presets." + args[1] + ".boss.color");
                                 String st = Main.getInstance().getConfig().getString("Presets." + args[1] + ".boss.style");
                                 String tx = Main.getInstance().getConfig().getString("Presets." + args[1] + ".boss.text");
-                                Main.bar.createBar(t, c, st, tx);
+                                org.bukkit.boss.BossBar createdBar = Main.bar.createBar(t, c, st, tx);
                                 Player rand = (Player) Bukkit.getOnlinePlayers().toArray()[new Random().nextInt(Bukkit.getOnlinePlayers().size())];
-                                Main.bar.addPlayer(rand);
+                                createdBar.addPlayer(rand);
                                 redisPublish("boss", tx, t + "|" + c + "|" + st);
                             } else {
                                 Messages.prefix(s, "&cInvalid Preset Name");
@@ -80,12 +80,12 @@ public class RandomBroadcast implements CommandExecutor {
                         else if (args.length >= 5) {
                             if (CommandCheck.isInt(args[1])) {
                                 String bossMsg = Messages.stringJoin(args, 4);
-                                Main.bar.createBar(Integer.parseInt(args[1]), args[2], args[3], bossMsg);
+                                org.bukkit.boss.BossBar createdBar = Main.bar.createBar(Integer.parseInt(args[1]), args[2], args[3], bossMsg);
                                 Player rand = (Player) Bukkit.getOnlinePlayers().toArray()[new Random().nextInt(Bukkit.getOnlinePlayers().size())];
-                                Main.bar.addPlayer(rand);
+                                createdBar.addPlayer(rand);
                                 redisPublish("boss", bossMsg, args[1] + "|" + args[2] + "|" + args[3]);
                             } else {
-                                Messages.prefix(s, Lang.getLangConfig().getString("&cInvalid Timing"));
+                                Messages.prefix(s, "&cInvalid Timing");
                             }
                         } else {
                             Messages.prefix(s, Lang.getLangConfig().getString("random-broadcast-boss-usage"));

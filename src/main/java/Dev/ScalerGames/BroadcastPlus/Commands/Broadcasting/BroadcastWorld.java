@@ -93,25 +93,26 @@ public class BroadcastWorld implements CommandExecutor, TabCompleter {
                     else if (args[0].equalsIgnoreCase("boss")) {
                         if (args.length == 3) {
                             if (Main.getInstance().getConfig().contains("Presets." + args[2] + ".boss")) {
-                                Main.bar.createBar(Main.getInstance().getConfig().getInt("Presets." + args[2] + ".boss.time"),
+                                org.bukkit.boss.BossBar createdBar = Main.bar.createBar(
+                                        Main.getInstance().getConfig().getInt("Presets." + args[2] + ".boss.time"),
                                         Main.getInstance().getConfig().getString("Presets." + args[2] + ".boss.color"),
                                         Main.getInstance().getConfig().getString("Presets." + args[2] + ".boss.style"),
                                         Main.getInstance().getConfig().getString("Presets." + args[2] + ".boss.text"));
+                                Bukkit.getOnlinePlayers().forEach(player -> {
+                                    if (player.getWorld().getName().equalsIgnoreCase(args[1])) {
+                                        createdBar.addPlayer(player);
+                                    }
+                                });
                             } else {
                                 Messages.prefix(s, "&cInvalid Prefix Name");
                             }
-                            Bukkit.getOnlinePlayers().forEach(player -> {
-                                if (player.getWorld().getName().equalsIgnoreCase(args[1])) {
-                                    Main.bar.addPlayer(player);
-                                }
-                            });
                         }
                         else if (args.length >= 6 && CommandCheck.isInt(args[2])) {
                             if (Bukkit.getWorld(args[1]) != null) {
-                                Main.bar.createBar(Integer.parseInt(args[2]), args[3], args[4], Messages.stringJoin(args, 5));
+                                org.bukkit.boss.BossBar createdBar = Main.bar.createBar(Integer.parseInt(args[2]), args[3], args[4], Messages.stringJoin(args, 5));
                                 Bukkit.getOnlinePlayers().forEach(player -> {
                                     if (player.getWorld().getName().equalsIgnoreCase(args[1])) {
-                                        Main.bar.addPlayer(player);
+                                        createdBar.addPlayer(player);
                                     }
                                 });
                             }
@@ -170,9 +171,9 @@ public class BroadcastWorld implements CommandExecutor, TabCompleter {
             return result;
         }
 
-        if (worlds.isEmpty()) {
-            Bukkit.getWorlds().forEach(world -> worlds.add(world.getName()));
-        }
+        // Always rebuild the world list to reflect worlds loaded/unloaded since last tab-complete
+        worlds.clear();
+        Bukkit.getWorlds().forEach(world -> worlds.add(world.getName()));
 
         List<String> wResult = new ArrayList<>();
         if (args.length == 2) {

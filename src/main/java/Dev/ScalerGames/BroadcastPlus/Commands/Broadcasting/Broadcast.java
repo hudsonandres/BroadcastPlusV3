@@ -100,8 +100,8 @@ public class Broadcast implements CommandExecutor, TabCompleter {
                                 String st = Main.getInstance().getConfig().getString("Presets." + effectiveArgs[1] + ".boss.style");
                                 String tx = Main.getInstance().getConfig().getString("Presets." + effectiveArgs[1] + ".boss.text");
                                 if (shouldExecuteLocally(targetServer)) {
-                                    Main.bar.createBar(t, c, st, tx);
-                                    Bukkit.getOnlinePlayers().forEach(player -> Main.bar.addPlayer(player));
+                                    org.bukkit.boss.BossBar createdBar = Main.bar.createBar(t, c, st, tx);
+                                    Bukkit.getOnlinePlayers().forEach(player -> createdBar.addPlayer(player));
                                 }
                                 redisPublish("boss", tx, t + "|" + c + "|" + st, targetServer);
                             } else {
@@ -112,8 +112,8 @@ public class Broadcast implements CommandExecutor, TabCompleter {
                             if (CommandCheck.isInt(effectiveArgs[1])) {
                                 String bossMsg = Messages.stringJoin(effectiveArgs, 4);
                                 if (shouldExecuteLocally(targetServer)) {
-                                    Main.bar.createBar(Integer.parseInt(effectiveArgs[1]), effectiveArgs[2], effectiveArgs[3], bossMsg);
-                                    Bukkit.getOnlinePlayers().forEach(player -> Main.bar.addPlayer(player));
+                                    org.bukkit.boss.BossBar createdBar = Main.bar.createBar(Integer.parseInt(effectiveArgs[1]), effectiveArgs[2], effectiveArgs[3], bossMsg);
+                                    Bukkit.getOnlinePlayers().forEach(player -> createdBar.addPlayer(player));
                                 }
                                 redisPublish("boss", bossMsg, effectiveArgs[1] + "|" + effectiveArgs[2] + "|" + effectiveArgs[3], targetServer);
                             } else {

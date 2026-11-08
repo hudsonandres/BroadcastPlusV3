@@ -13,6 +13,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -24,14 +25,19 @@ public class LocalBroadcast implements CommandExecutor, TabCompleter {
 
     public boolean onCommand(@NotNull CommandSender s, @NotNull Command cmd, String label, String[] args) {
         if (label.equalsIgnoreCase("localbroadcast") || label.equalsIgnoreCase("lb")) {
+            // CommandCheck already ensures s is a Player when player_only=true
             if (CommandCheck.execute(s, "bp.localbroadcast", true)) {
+                Player sender = (Player) s;
                 if (args.length >= 3) {
 
                     if (args[0].equalsIgnoreCase("chat")) {
                         if (CommandCheck.isInt(args[1])) {
+                            int range = Integer.parseInt(args[1]);
+                            String chatMsg = Messages.broadcastMSG(args, 2);
                             Bukkit.getOnlinePlayers().forEach(player -> {
-                                if (player.getLocation().distance(player.getLocation()) <= Integer.parseInt(args[1])) {
-                                    Features.broadcastChat(Messages.broadcastMSG(args, 2), player);
+                                if (player.getWorld().equals(sender.getWorld())
+                                        && player.getLocation().distance(sender.getLocation()) <= range) {
+                                    Features.broadcastChat(chatMsg, player);
                                 }
                             });
                         } else {
@@ -42,9 +48,13 @@ public class LocalBroadcast implements CommandExecutor, TabCompleter {
                     else if (args[0].equalsIgnoreCase("bar")) {
                         if (args.length >= 4) {
                             if (CommandCheck.isInt(args[1]) && CommandCheck.isInt(args[2])) {
+                                int range = Integer.parseInt(args[1]);
+                                int timing = Integer.parseInt(args[2]);
+                                String barMsg = Messages.stringJoin(args, 3);
                                 Bukkit.getOnlinePlayers().forEach(player -> {
-                                    if (player.getLocation().distance(player.getLocation()) <= Integer.parseInt(args[1])) {
-                                        BroadcastMethods.sendActionBar(player, Messages.stringJoin(args, 3), Integer.parseInt(args[2]));
+                                    if (player.getWorld().equals(sender.getWorld())
+                                            && player.getLocation().distance(sender.getLocation()) <= range) {
+                                        BroadcastMethods.sendActionBar(player, barMsg, timing);
                                     }
                                 });
                             } else {
@@ -57,9 +67,12 @@ public class LocalBroadcast implements CommandExecutor, TabCompleter {
 
                     else if (args[0].equalsIgnoreCase("title")) {
                         if (CommandCheck.isInt(args[1])) {
+                            int range = Integer.parseInt(args[1]);
+                            String titleMsg = Messages.broadcastMSG(args, 2);
                             Bukkit.getOnlinePlayers().forEach(player -> {
-                                if (player.getLocation().distance(player.getLocation()) <= Integer.parseInt(args[1])) {
-                                    BroadcastMethods.sendTitle(player, Messages.broadcastMSG(args, 2));
+                                if (player.getWorld().equals(sender.getWorld())
+                                        && player.getLocation().distance(sender.getLocation()) <= range) {
+                                    BroadcastMethods.sendTitle(player, titleMsg);
                                 }
                             });
                         } else {
@@ -70,8 +83,10 @@ public class LocalBroadcast implements CommandExecutor, TabCompleter {
                     else if (args[0].equalsIgnoreCase("gui")) {
                         if (args.length == 3 && Objects.requireNonNull(Gui.getGuiConfig().getConfigurationSection("Menus")).getKeys(false).contains(args[2])) {
                             if (CommandCheck.isInt(args[1])) {
+                                int range = Integer.parseInt(args[1]);
                                 Bukkit.getOnlinePlayers().forEach(player -> {
-                                    if (player.getLocation().distance(player.getLocation()) <= Integer.parseInt(args[1])) {
+                                    if (player.getWorld().equals(sender.getWorld())
+                                            && player.getLocation().distance(sender.getLocation()) <= range) {
                                         GuiCreator.generate(player, args[2]);
                                     }
                                 });
@@ -86,13 +101,16 @@ public class LocalBroadcast implements CommandExecutor, TabCompleter {
                     else if (args[0].equalsIgnoreCase("boss")) {
                         if (args.length == 3) {
                             if (Main.getInstance().getConfig().contains("Presets." + args[2] + ".boss")) {
-                                Main.bar.createBar(Main.getInstance().getConfig().getInt("Presets." + args[2] + ".boss.time"),
+                                int range = Integer.parseInt(args[1]);
+                                org.bukkit.boss.BossBar createdBar = Main.bar.createBar(
+                                        Main.getInstance().getConfig().getInt("Presets." + args[2] + ".boss.time"),
                                         Main.getInstance().getConfig().getString("Presets." + args[2] + ".boss.color"),
                                         Main.getInstance().getConfig().getString("Presets." + args[2] + ".boss.style"),
                                         Main.getInstance().getConfig().getString("Presets." + args[2] + ".boss.text"));
                                 Bukkit.getOnlinePlayers().forEach(player -> {
-                                    if (player.getLocation().distance(player.getLocation()) <= Integer.parseInt(args[1])) {
-                                        Main.bar.addPlayer(player);
+                                    if (player.getWorld().equals(sender.getWorld())
+                                            && player.getLocation().distance(sender.getLocation()) <= range) {
+                                        createdBar.addPlayer(player);
                                     }
                                 });
                             } else {
@@ -100,10 +118,13 @@ public class LocalBroadcast implements CommandExecutor, TabCompleter {
                             }
                         }
                         else if (args.length >= 6 && CommandCheck.isInt(args[2]) && CommandCheck.isInt(args[1])) {
-                            Main.bar.createBar(Integer.parseInt(args[2]), args[3], args[4], Messages.stringJoin(args, 5));
+                            int range = Integer.parseInt(args[1]);
+                            org.bukkit.boss.BossBar createdBar = Main.bar.createBar(
+                                    Integer.parseInt(args[2]), args[3], args[4], Messages.stringJoin(args, 5));
                             Bukkit.getOnlinePlayers().forEach(player -> {
-                                if (player.getLocation().distance(player.getLocation()) <= Integer.parseInt(args[1])) {
-                                    Main.bar.addPlayer(player);
+                                if (player.getWorld().equals(sender.getWorld())
+                                        && player.getLocation().distance(sender.getLocation()) <= range) {
+                                    createdBar.addPlayer(player);
                                 }
                             });
                         } else {

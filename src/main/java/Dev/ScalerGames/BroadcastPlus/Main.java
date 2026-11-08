@@ -17,7 +17,9 @@ import Dev.ScalerGames.BroadcastPlus.Utils.Metrics;
 import Dev.ScalerGames.BroadcastPlus.Utils.Placeholders;
 import Dev.ScalerGames.BroadcastPlus.Utils.UpdateChecker;
 import org.bukkit.Bukkit;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
@@ -114,6 +116,15 @@ public class Main extends JavaPlugin implements Listener {
 
     public void enableListeners() {
         Bukkit.getPluginManager().registerEvents(new GuiListener(), this);
+        // Re-add joining players to any active boss bars (handles server switches via BungeeCord/Velocity)
+        Bukkit.getPluginManager().registerEvents(new Listener() {
+            @EventHandler
+            public void onPlayerJoin(PlayerJoinEvent event) {
+                if (bar != null) {
+                    bar.addPlayerToActiveBars(event.getPlayer());
+                }
+            }
+        }, this);
     }
 
     public void enableRedis() {
